@@ -43,6 +43,17 @@ public class UnitBase : EventPubSub, IUnit
         Publish("Unit " + gameObject.name + " Updated");
     }
 
+    protected void PartyUp()
+    {
+        partyManager.JoinParty(this);
+    }
+    protected void LeaveParty()
+    {
+        partyManager.LeaveParty(this);
+    }
+
+
+
     virtual protected void UnitInit()
     {
         Publish("Unit " + gameObject.name + " Init");

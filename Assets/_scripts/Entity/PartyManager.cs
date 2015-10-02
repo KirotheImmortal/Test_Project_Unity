@@ -76,31 +76,24 @@ public class PartyManager : EventPubSub
 
 
 
-    public void JoinParty(Player plr)
+    public void JoinParty(UnitBase plr)
     {
         if (partyMembers.Contains(plr))
             partyMembers.Add(plr);
         else
             throw new System.ArgumentException("Already exists in " + this, plr.gameObject.name);
     }
-    public void JoinPart(AIPlayer aiplr)
-    {
-        if (partyMembers.Contains(aiplr))
-            partyMembers.Add(aiplr);
-        else throw new System.ArgumentException("Already exists in " + this, aiplr.gameObject.name);
-    }
-
-    public void LeaveParty(Player plr)
+ 
+    public void LeaveParty(UnitBase plr)
     {
         if (partyMembers.Contains(plr))
             partyMembers.Remove(plr);
         else throw new System.ArgumentException("Does not exist in " + this, plr.gameObject.name);
     }
-    public void LeaveParty(AIPlayer aiplr)
+
+    public List<UnitBase> GetPartyList()
     {
-        if (partyMembers.Contains(aiplr))
-            partyMembers.Remove(aiplr);
-        else throw new System.ArgumentException("Does not exist in " + this, aiplr.gameObject.name);
+        return partyMembers;
     }
 
     public List<Player> GetPlayerList()
