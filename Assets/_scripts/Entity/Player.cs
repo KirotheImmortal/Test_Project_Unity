@@ -3,38 +3,55 @@ using System.Collections;
 
 public class Player : UnitBase
 {
-    GameObject target;
+
+    bool targeting = true;
+    Color att = Color.white;
+    Color fin = Color.red;
+    Color rdy = Color.blue;
+    Material tempMat;
+
+    void Awake()
+    {
+        tempMat = gameObject.GetComponent<Renderer>().material;
+       PartyUp();
+        Subscribe(this.ToString(), GoINIT);
+       base.UnitStart();
+    }
 
 
 
     protected override void UnitInit()
     {
-        Subscribe("GUI: Attack", UnitAttack);
-        Subscribe("GUI: End", UnitEnd);
-        fsm.changeState(StateMAIN);
+      
+        GoMAIN();
         base.UnitInit();
     }
 
     protected override void UnitMain()
-    {
-
+    {   tempMat.color = rdy;
+        gameObject.GetComponent<Renderer>().material = tempMat;
+        Publish("unitmain");
+        Subscribe("GUI: Attack", UnitAttack);
+        Subscribe("GUI: End", GoEND);
         base.UnitMain();
     }
 
     protected override void UnitAttack()
     {
-
         StartCoroutine(SelectTarget());
-
     }
     private void Attacked()
     {
-        fsm.changeState(stateEND);
+        GoEND();
         base.UnitAttack();
     }
 
     protected override void UnitEnd()
     {
+        tempMat.color = fin;
+        gameObject.GetComponent<Renderer>().material = tempMat;
+
+
         UnSubscribe("GUI: Attack", UnitAttack);
         UnSubscribe("GUI: End", UnitEnd);
         base.UnitEnd();
@@ -42,11 +59,14 @@ public class Player : UnitBase
 
     IEnumerator SelectTarget()
     {
-        print("IEnum");
-        while (target == null)
-        {
-            print("IEnum");
 
+        
+        tempMat.color = att;
+        gameObject.GetComponent<Renderer>().material = tempMat;
+        while (targeting)
+        {GameObject target;
+
+            
             if (Input.GetMouseButtonDown(0))
             { // if left button pressed...
                 Ray ray = FindObjectOfType<Camera>().ScreenPointToRay(Input.mousePosition);
@@ -57,6 +77,7 @@ public class Player : UnitBase
                     {
                         target = hit.collider.gameObject;
                         print(gameObject.name + " -attacking-> " + target.name);
+                        targeting = false;
                     }
                 }
 
@@ -64,7 +85,7 @@ public class Player : UnitBase
             yield return null;
 
         }
-        target = null;
+        
         Attacked();
 
     }

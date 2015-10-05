@@ -2,46 +2,52 @@
 using System.Collections;
 public interface IUnit
 {
-    void EntityUpdate();
-    void EntityStart();
-    void EntityDestroy();
+    void UnitUpdate();
+    void UnitStart();
+    void UnitDestroy();
 
 }
 public class UnitBase : EventPubSub, IUnit
 {
     [SerializeField]
     protected PartyManager partyManager;
-    
-    public float Health { get; protected set; }
-    public float Resource { get; protected set; }
-    public float Speed { get; protected set; }
+    [SerializeField]
+    protected float _Health;
+    public float Health { get { return _Health; } }
+    [SerializeField]
+    protected float _Resource;
+    public float Resource { get { return _Resource; } }
+    [SerializeField]
+    protected float _Speed;
+    public float Speed { get { return _Speed; } }
+
 
     protected string StateINIT = "init";
     protected string StateMAIN = "main";
-    protected string StateAttk = "attack";
     protected string stateEND = "end";
 
-   protected QStateMachine fsm = new QStateMachine();
+    protected QStateMachine fsm = new QStateMachine();
 
-   
 
-    public virtual void EntityDestroy()
+
+    public virtual void UnitDestroy()
     {
         Destroy(gameObject);
     }
-    public virtual void EntityStart()
+    public virtual void UnitStart()
     {
         fsm.addState(StateINIT, null);
         fsm.addState(StateMAIN, StateINIT);
-        fsm.addState(StateAttk, StateMAIN);
         fsm.addState(stateEND, null);
 
-        Publish("Unit " + gameObject.name + " Started");
+        Publish("Unit" + gameObject.name + "Started");
     }
-    public virtual void EntityUpdate()
+    public virtual void UnitUpdate()
     {
-        Publish("Unit " + gameObject.name + " Updated");
+        Publish("Unit" + gameObject.name + "Updated");
     }
+
+
 
     protected void PartyUp()
     {
@@ -54,21 +60,79 @@ public class UnitBase : EventPubSub, IUnit
 
 
 
+    protected void InvokeStateFunction()
+    {
+        if (fsm.currentState == fsm.getState(StateINIT))
+            UnitInit();
+        else if (fsm.currentState == fsm.getState(StateMAIN))
+            UnitMain();
+        else if (fsm.currentState == fsm.getState(stateEND))
+            UnitEnd();
+    }
+    protected void InvokeStateShift()
+    {
+        bool statechanged = false;
+        if (fsm.currentState == fsm.getState(StateINIT))
+        {
+            fsm.changeState(StateMAIN);
+            statechanged = true;
+        }
+        else if (fsm.currentState == fsm.getState(StateMAIN))
+        {
+            fsm.changeState(stateEND);
+            statechanged = true;
+        }
+        else if (fsm.currentState == fsm.getState(stateEND))
+        {
+            fsm.changeState(StateINIT);
+            statechanged = true;
+        }
+
+
+        if (statechanged)
+            InvokeStateFunction();
+    }
+    protected void GoMAIN()
+    {
+        if (fsm.currentState == fsm.getState(StateINIT))
+        {
+            fsm.changeState(StateMAIN);
+            UnitMain();
+        }
+            
+    }
+    protected void GoINIT()
+    {
+        if (fsm.currentState != fsm.getState(StateMAIN))
+        {
+            fsm.changeState(StateINIT);
+            UnitInit();
+        }
+            
+    }
+    protected void GoEND()
+    {
+        fsm.changeState(stateEND);
+        UnitEnd();
+    }
+
+
+
     virtual protected void UnitInit()
     {
-        Publish("Unit " + gameObject.name + " Init");
+        Publish(this.ToString() + "Init");
     }
     virtual protected void UnitMain()
     {
-        Publish("Unit " + gameObject.name + " Main");
+        Publish(this.ToString() + "Main");
     }
     virtual protected void UnitAttack()
     {
-        Publish("Unit " + gameObject.name + " Attack");
+        Publish(this.ToString() + "Attack");
     }
     virtual protected void UnitEnd()
     {
-        Publish("Unit " + gameObject.name + " End");
+        Publish(this.ToString() + "End");
     }
 
 

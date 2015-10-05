@@ -9,37 +9,65 @@ public class PartyManager : EventPubSub
     List<UnitBase> partyMembers = new List<UnitBase>();
 
     public string init = "init";
-    public string start = "start";
     public string main = "main";
     public string end = "end";
 
     private bool changePlayer = false;
     private int nextPlayer = 0;
 
-    void Start()
+    void OnEnable()
     {
         fsm.addState(init, null);
-        fsm.addState(start, init);
-        fsm.addState(main, start);
+        fsm.addState(main, init);
         fsm.addState(end, null);
+       
+        Subscribe(this.ToString(), ToInit);
     }
 
     void ToInit()
     {
         fsm.changeState(init);
+        StateInit();
+    }
+    void ToMain()
+    {
+        if (fsm.changeState(main))
+        {
+            StateMain();
+        }
+    }
+    void ToEnd()
+    { 
+        fsm.changeState(end);
+
+        StateEnd();
+
     }
 
     void ChangePlayer()
+    { UnSubscribe(partyMembers[nextPlayer - 1].ToString() + "End", ChangePlayer);
+        if (nextPlayer > partyMembers.Count)
+            ToEnd();
+        else
+         changePlayer = true;
+    }
+
+
+    void StateInit()
     {
         changePlayer = true;
+        ToMain();
     }
-
-    [ContextMenu("Hell")]
-    void ToMain()
+    void StateMain()
     {
         StartCoroutine(MainPhase());
+        
     }
-
+    void StateEnd()
+    {
+        StopCoroutine(MainPhase());
+        Publish(this.ToString() + "end");
+    }
 
 
     IEnumerator MainPhase()
@@ -49,26 +77,18 @@ public class PartyManager : EventPubSub
             if (changePlayer == true)
             {
                 if (partyMembers != null)
-                Publish(partyMembers[nextPlayer].ToString());
-                nextPlayer++;
-                changePlayer = false;
+                {
+                    Publish(partyMembers[nextPlayer].ToString());
+                    Subscribe(partyMembers[nextPlayer].ToString() + "end", ChangePlayer);
+                    nextPlayer++;
+                    changePlayer = false;
+                }
             }
-           
+
             yield return null;
         }
-
-        fsm.changeState(end);
-        Publish(this.ToString() + "End");
+       
     }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -78,12 +98,14 @@ public class PartyManager : EventPubSub
 
     public void JoinParty(UnitBase plr)
     {
-        if (partyMembers.Contains(plr))
+        if (!partyMembers.Contains(plr))
+        {
             partyMembers.Add(plr);
+        }
         else
-            throw new System.ArgumentException("Already exists in " + this, plr.gameObject.name);
+            throw new System.ArgumentException("Already exists in " + this.ToString(), plr.gameObject.name);
     }
- 
+
     public void LeaveParty(UnitBase plr)
     {
         if (partyMembers.Contains(plr))
@@ -186,6 +208,15 @@ public class PartyManager : EventPubSub
 
         return speed;
     }
+    public float AvrPartySpeed()
+    {
+        return  TotalPartySpeed() / partyMembers.Count;
+    }
+    public float FastestSpeed()
+    {
+        return QuickestMember().Speed;
+    }
+
 
 
 }

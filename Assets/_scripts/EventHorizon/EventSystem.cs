@@ -1,20 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public delegate void Callback();
 
 public class EventSystem : MonoBehaviour
 {
-    /// <summary>
-    /// Void Delegate with No Params
-    /// </summary>
-   
 
     /// <summary>
     /// List of "Published" strings
     /// </summary>
-  
+
 
     /// <summary>
     /// Dictionary of Subscribers
@@ -44,22 +41,29 @@ public class EventSystem : MonoBehaviour
     /// <param name="sPubEvent"></param>
     public void AddPublishedEvent(string sPubEvent)
     {
-      //  Publishes.Add(sPubEvent.ToLower());
+        //  Publishes.Add(sPubEvent.ToLower());
 
-        if (Subscribers.ContainsKey(sPubEvent.ToLower()) && Subscribers[sPubEvent.ToLower()]!= null)
+        if (Subscribers.ContainsKey(sPubEvent.ToLower()) && Subscribers[sPubEvent.ToLower()] != null)
             Subscribers[sPubEvent.ToLower()]();
 
     }
 
     /// <summary>
     /// Removes the Callback delegate associated with the string msg
+    /// Removes the Key if the delegate becomes empty
     /// </summary>
     /// <param name="sPub"></param>
     /// <param name="onEvent"></param>
     public void RemoveSubscription(string sPub, Callback onEvent)
     {
-        if(Subscribers.ContainsKey(sPub) && Subscribers[sPub] != null)
-        Subscribers[sPub] -= onEvent;
+        sPub = sPub.ToLower();
+        if (Subscribers.ContainsKey(sPub))
+        {
+            Subscribers[sPub] -= onEvent;
+            if (Subscribers[sPub] == null)
+                Subscribers.Remove(sPub);
+        }
+        else throw new ArgumentException("Subscription to '" + sPub.ToLower()+ "' Does not exist. Check Spelling.", this.ToString());
     }
 
 
@@ -103,5 +107,5 @@ public class EventSystem : MonoBehaviour
     //  //  StartCoroutine(EventUpdate());
     //}
 
- // List<string> Publishes = new List<string>();
+    // List<string> Publishes = new List<string>();
 }
