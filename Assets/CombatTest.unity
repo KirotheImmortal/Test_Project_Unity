@@ -118,6 +118,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   esEventSystem: {fileID: 2052383956}
+  gotext: {fileID: 167601254}
 --- !u!114 &39157901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,7 +186,7 @@ RectTransform:
   - {fileID: 206137060}
   - {fileID: 698293120}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -300,6 +301,80 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 132154064}
+--- !u!1 &167601254
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 167601257}
+  - 23: {fileID: 167601256}
+  - 102: {fileID: 167601255}
+  m_Layer: 0
+  m_Name: GamoverText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!102 &167601255
+TextMesh:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 167601254}
+  m_Text: Game Over
+  m_OffsetZ: 0
+  m_CharacterSize: 1
+  m_LineSpacing: 1
+  m_Anchor: 0
+  m_Alignment: 0
+  m_TabSize: 1
+  m_FontSize: 0
+  m_FontStyle: 1
+  m_RichText: 1
+  m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4278190080
+--- !u!23 &167601256
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 167601254}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 10100, guid: 0000000000000000e000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_ImportantGI: 0
+  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!4 &167601257
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 167601254}
+  m_LocalRotation: {x: .707106829, y: .5, z: -5.96046448e-08, w: .499999911}
+  m_LocalPosition: {x: -2, y: 0, z: .670000017}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
 --- !u!1 &206137059
 GameObject:
   m_ObjectHideFlags: 0
@@ -568,7 +643,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   esEventSystem: {fileID: 2052383956}
   partyManager: {fileID: 1774810856}
-  _Health: 0
+  _Health: 20
   _Resource: 0
   _Speed: 1
 --- !u!1 &698293119
@@ -816,7 +891,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   esEventSystem: {fileID: 2052383956}
   partyManager: {fileID: 78441033}
-  _Health: 0
+  _Health: 1
   _Resource: 0
   _Speed: 5
 --- !u!1 &1437299212
@@ -906,7 +981,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   esEventSystem: {fileID: 2052383956}
   partyManager: {fileID: 78441033}
-  _Health: 0
+  _Health: 1
   _Resource: 0
   _Speed: 1
 --- !u!1 &1467699863
@@ -982,7 +1057,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
 --- !u!1 &1507778028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1015,7 +1090,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   esEventSystem: {fileID: 2052383956}
   partyManager: {fileID: 1774810856}
-  _Health: 0
+  _Health: 20
   _Resource: 0
   _Speed: 20
 --- !u!23 &1507778030

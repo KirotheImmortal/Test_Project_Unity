@@ -8,34 +8,75 @@ public class CombatManager : EventPubSub
     [SerializeField]
     public List<PartyManager> parties = new List<PartyManager>();
 
-    int currentParty = 0;
+    PartyManager nextParty;
 
     void Start()
     { begin(); }
+    void PartySlane()
+    {
+        
+        foreach (PartyManager p in parties)
+        {
+            if (p.GetPartyList() == null)
+                parties.Remove(p);
+        }
+    }
 
+
+    bool PartyCheck()
+    {
+        
+        foreach(PartyManager p in parties)
+        {
+            if (p.GetPartyList() == null)
+                parties.Remove(p);
+        }
+        if(parties.Count <= 1)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    //Start up functions
     void begin()
     {
         OrderParties();
+        nextParty = parties[0];
         QueueFights();
     }
 
+    //Subscribes to listen for the currentPartie's end call. and publishes that parties call.
     void QueueFights()
     {
-        Publish(parties[currentParty].ToString()); print(parties[currentParty].ToString());
-        Subscribe(parties[currentParty].ToString() + "end", NextParty);
+        if (parties.Contains(nextParty))
+        {
+            Subscribe(parties[parties.IndexOf(nextParty)].ToString() + "end", NextParty);
+            Publish(parties[parties.IndexOf(nextParty)].ToString());
+        }
+        
     }
+    //When called unsubscribes to the call of the previous party. Incramments currentParty. And the calls QueueFights();
     void NextParty()
     {
-        UnSubscribe(parties[currentParty].ToString() + "end", NextParty);
-        
-        currentParty++;
-        if (currentParty > parties.Count - 1)
+        UnSubscribe(parties[parties.IndexOf(nextParty)].ToString() + "end", NextParty);
+        if (PartyCheck() == true)
         {
-            OrderParties();
-            currentParty = 0;
+            print("It happend after PartyCheck().");
+            if (parties.IndexOf(nextParty) + 1 > parties.Count - 1)
+            {
+                OrderParties();
+                nextParty = parties[0];
+            }
+            else nextParty = parties[parties.IndexOf(nextParty) + 1];
+            print("It happend after next party check.");
+            QueueFights();
         }
-                QueueFights();
+        else
+            Publish("GameOver");
+                
     }
+    //Reorders the list based on the average speed of each party
     void OrderParties()
     {
         List<PartyManager> templ = new List<PartyManager>();
@@ -72,6 +113,10 @@ public class CombatManager : EventPubSub
         }
         parties = templ;
     }
-
+    
+    void Awake()
+    {
+        Subscribe("PartySlane", PartySlane);
+    }
 
 }

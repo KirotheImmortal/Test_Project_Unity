@@ -22,6 +22,12 @@ public class UnitBase : EventPubSub, IUnit
     public float Speed { get { return _Speed; } }
 
 
+   protected Color att = Color.white;
+   protected Color fin = Color.red;
+   protected Color rdy = Color.blue;
+   protected Color ded = Color.black;
+   protected Material tempMat;
+
     protected string StateINIT = "init";
     protected string StateMAIN = "main";
     protected string stateEND = "end";
@@ -116,7 +122,16 @@ public class UnitBase : EventPubSub, IUnit
         UnitEnd();
     }
 
-
+    protected void GetHit()
+    {
+        _Health -= 5;
+        if(_Health<=0)
+        {
+            LeaveParty();
+            tempMat.color = ded;
+            gameObject.GetComponent<Renderer>().material = tempMat;
+        }
+    }
 
     virtual protected void UnitInit()
     {

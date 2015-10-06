@@ -5,17 +5,14 @@ public class Player : UnitBase
 {
 
     bool targeting = true;
-    Color att = Color.white;
-    Color fin = Color.red;
-    Color rdy = Color.blue;
-    Material tempMat;
 
     void Awake()
     {
         tempMat = gameObject.GetComponent<Renderer>().material;
-       PartyUp();
+        PartyUp();
         Subscribe(this.ToString(), GoINIT);
-       base.UnitStart();
+        Subscribe(this.ToString() + "gethit", GetHit);
+        base.UnitStart();
     }
 
 
@@ -53,14 +50,14 @@ public class Player : UnitBase
 
 
         UnSubscribe("GUI: Attack", UnitAttack);
-        UnSubscribe("GUI: End", UnitEnd);
+        UnSubscribe("GUI: End", GoEND);
         base.UnitEnd();
     }
 
     IEnumerator SelectTarget()
     {
 
-        
+        targeting = true;
         tempMat.color = att;
         gameObject.GetComponent<Renderer>().material = tempMat;
         while (targeting)
@@ -73,17 +70,16 @@ public class Player : UnitBase
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit))
                 {
-                    if (hit.collider.gameObject.GetComponent<Player>() || hit.collider.gameObject.GetComponent<AIPlayer>())
+                    if ((hit.collider.gameObject.GetComponent<Player>()&& hit.collider.gameObject != gameObject) || hit.collider.gameObject.GetComponent<AIPlayer>() )
                     {
                         target = hit.collider.gameObject;
-                        print(gameObject.name + " -attacking-> " + target.name);
+                        Publish(target.GetComponent<UnitBase>().ToString() + "gethit");
                         targeting = false;
                     }
                 }
 
             }
             yield return null;
-
         }
         
         Attacked();
