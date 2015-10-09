@@ -4,9 +4,9 @@ using UnityEngine.UI;
 
 public class UnitGUI : EventPubSub
 {
-    bool gover;
+    
     [SerializeField]
-    GameObject gotext;
+    GameObject gotext = null;
     public void Attk()
     {
         Publish("GUI: Attack");

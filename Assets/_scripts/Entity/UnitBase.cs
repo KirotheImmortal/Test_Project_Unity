@@ -100,29 +100,25 @@ public class UnitBase : EventPubSub, IUnit
     }
     protected void GoMAIN()
     {
-        if (fsm.currentState == fsm.getState(StateINIT))
-        {
-            fsm.changeState(StateMAIN);
+        if (fsm.changeState(StateMAIN))    
             UnitMain();
-        }
-            
+        
+           
     }
     protected void GoINIT()
     {
-        if (fsm.currentState != fsm.getState(StateMAIN))
-        {
-            fsm.changeState(StateINIT);
+        if (fsm.changeState(StateINIT))
             UnitInit();
-        }
+        
             
     }
     protected void GoEND()
     {
-        fsm.changeState(stateEND);
+        if(fsm.changeState(stateEND))
         UnitEnd();
     }
 
-    protected void GetHit()
+    protected virtual void GetHit()
     {
         _Health -= 5;
         if(_Health<=0)

@@ -12,8 +12,8 @@ public class PartyManager : EventPubSub
     public string main = "main";
     public string end = "end";
 
-    private bool changePlayer = false;
-    UnitBase NextPlayer;
+    //private bool changePlayer = false;
+    private int nextPlayer;
 
     void OnEnable()
     {
@@ -43,67 +43,70 @@ public class PartyManager : EventPubSub
 
     void ChangePlayer()
     {
-
-        if (partyMembers.IndexOf(NextPlayer) + 1 <= partyMembers.Count - 1)
+        // if (partyMembers != null)
+        //   {
+        if (nextPlayer + 1 <= partyMembers.Count - 1)
         {
-            NextPlayer = partyMembers[partyMembers.IndexOf(NextPlayer) + 1];
-            changePlayer = true;
-            UnSubscribe(partyMembers[partyMembers.IndexOf(NextPlayer) - 1].ToString() + "End", ChangePlayer);
+
+            if (nextPlayer >= 0)
+                UnSubscribe(partyMembers[nextPlayer].ToString() + "End", ChangePlayer);
+
+
+
+            nextPlayer += 1;
+            //changePlayer = true;
+
+            Publish(partyMembers[nextPlayer].ToString());
+            Subscribe(partyMembers[nextPlayer].ToString() + "end", ChangePlayer);
+
+            // changePlayer = false;
         }
         else
         {
-            UnSubscribe(partyMembers[partyMembers.IndexOf(NextPlayer)].ToString() + "End", ChangePlayer);
-            NextPlayer = partyMembers[0];
+            if (nextPlayer >= 0)
+                UnSubscribe(partyMembers[nextPlayer].ToString() + "End", ChangePlayer);
+            // nextPlayer = 0;
             ToEnd();
         }
+        
 
+
+        //  }
+        //  else Publish("PartySlane");
+
+    }
+    void Dead()
+    {
+        UnSubscribe(this.ToString(), ToInit);
     }
 
 
     void StateInit()
-    {if (partyMembers != null)
+    {
+        if (partyMembers.Count > 0)
         {
-            changePlayer = true;
-            NextPlayer = partyMembers[0];
+            // changePlayer = true;
+            nextPlayer = -1;
             ToMain();
         }
-        ToEnd();
+        else
+        {
+            ToEnd();
+            Publish("PartySlane");
+        }
     }
     void StateMain()
     {
-        StartCoroutine(MainPhase());
+        ChangePlayer();
 
     }
     void StateEnd()
     {
-        StopCoroutine(MainPhase());
+
+        nextPlayer = -1;
         Publish(this.ToString() + "end");
 
     }
-
-
-    IEnumerator MainPhase()
-    {
-        while (partyMembers.Count > 0) 
-        {
-            if (changePlayer == true)
-            {
-                if (partyMembers != null)
-                {
-                    Publish(partyMembers[partyMembers.IndexOf(NextPlayer)].ToString());
-                    Subscribe(partyMembers[partyMembers.IndexOf(NextPlayer)].ToString() + "end", ChangePlayer);
-
-                    changePlayer = false;
-                }
-                else
-                    ToEnd();
-            }
-
-            yield return null;
-        }
-
-    }
-
 
 
 
@@ -127,27 +130,21 @@ public class PartyManager : EventPubSub
     {
         if (partyMembers.Contains(plr))
         {
-            if (NextPlayer == plr)
+            if (nextPlayer >= 0 && (partyMembers[nextPlayer] == plr))
             {
-                if (partyMembers.IndexOf(NextPlayer) + 1 <= partyMembers.Count - 1)
-                { print("killed and was last in list");
-                    NextPlayer = partyMembers[0];
-                   
-                }
-                else if (partyMembers.IndexOf(NextPlayer) - 1 >= 0)
-                {print("Killed and was first");
-                    NextPlayer = partyMembers[partyMembers.IndexOf(NextPlayer) + 1];
-                    
-                }
-                else if (partyMembers.IndexOf(NextPlayer) - 1 < 0)
+                if (nextPlayer + 1 <= partyMembers.Count - 1)
                 {
-                   
-                    NextPlayer = null; print("Last to die");
+                    P
+                    nextPlayer = -1;
                 }
+
+            }
+            else if (nextPlayer + 1 > partyMembers.Count - 1)
+            {
+                nextPlayer -= 1;
             }
             partyMembers.Remove(plr);
-            if (partyMembers.Count == 0)
-                Publish("PartySlane");
+
         }
         else throw new System.ArgumentException("Does not exist in " + this, plr.gameObject.name);
     }
@@ -156,6 +153,8 @@ public class PartyManager : EventPubSub
     /// </summer>
     public List<UnitBase> GetPartyList()
     {
+        if (partyMembers.Count == 0)
+            return null;
         return partyMembers;
     }
     ///<summer>

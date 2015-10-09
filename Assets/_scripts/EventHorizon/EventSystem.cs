@@ -59,53 +59,17 @@ public class EventSystem : MonoBehaviour
         sPub = sPub.ToLower();
         if (Subscribers.ContainsKey(sPub))
         {
+           
             Subscribers[sPub] -= onEvent;
             if (Subscribers[sPub] == null)
                 Subscribers.Remove(sPub);
         }
-        else throw new ArgumentException("Subscription to '" + sPub.ToLower()+ "' Does not exist. Check Spelling.", this.ToString());
+        else throw new ArgumentException("Subscription to '" + sPub.ToLower(), this.ToString());
     }
 
 
 
 
 
-    ///// <summary>
-    /////  Bool used to reduce code use in EventUpdate()
-    ///// Checks to see if message exists inside of the "Published" List
-    ///// </summary>
-    ///// <param name="sPubEvent"></param>
-    ///// <returns></returns>
-    ////bool CheckForPublisher(string sPubEvent)
-    ////{
-    ////    if (Publishes.Contains(sPubEvent.ToLower()))
-    ////    {
-    ////        return true;
-    ////    }
-    ////    return false;
-
-    ////}
-
-    ////IEnumerator EventUpdate()
-    ////{
-    ////    while (true)
-    ////    {
-    ////        foreach (KeyValuePair<string, Callback> dSub in Subscribers) //Sift threw Dictionary
-    ////            if (CheckForPublisher(dSub.Key.ToLower()))       //Checks to see if there is a subscriber for each published in list
-    ////                if (dSub.Value != null)                     //Checks for null
-    ////                    dSub.Value();                         //Plays Delegate
-
-
-    ////        Publishes.Clear();
-
-    ////        yield return null;
-    ////    }
-    ////}
-
-    //void Awake()
-    //{
-    //  //  StartCoroutine(EventUpdate());
-    //}
-
-    // List<string> Publishes = new List<string>();
+    
 }

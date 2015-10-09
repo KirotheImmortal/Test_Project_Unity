@@ -27,7 +27,7 @@ public class Player : UnitBase
     protected override void UnitMain()
     {   tempMat.color = rdy;
         gameObject.GetComponent<Renderer>().material = tempMat;
-        Publish("unitmain");
+        
         Subscribe("GUI: Attack", UnitAttack);
         Subscribe("GUI: End", GoEND);
         base.UnitMain();
@@ -35,28 +35,30 @@ public class Player : UnitBase
 
     protected override void UnitAttack()
     {
-        StartCoroutine(SelectTarget());
+        StartCoroutine("SelectTarget");
     }
-    private void Attacked()
-    {
-        GoEND();
-        base.UnitAttack();
-    }
+
 
     protected override void UnitEnd()
     {
         tempMat.color = fin;
         gameObject.GetComponent<Renderer>().material = tempMat;
 
-
+        StopCoroutine("SelectTarget");
         UnSubscribe("GUI: Attack", UnitAttack);
         UnSubscribe("GUI: End", GoEND);
         base.UnitEnd();
     }
+    protected override void GetHit()
+    {
+ 
+        UnSubscribe(this.ToString(), GoINIT);
+        UnSubscribe(this.ToString() + "gethit", GetHit);
+        base.GetHit();
+    }
 
     IEnumerator SelectTarget()
     {
-
         targeting = true;
         tempMat.color = att;
         gameObject.GetComponent<Renderer>().material = tempMat;
@@ -65,12 +67,13 @@ public class Player : UnitBase
 
             
             if (Input.GetMouseButtonDown(0))
-            { // if left button pressed...
+            {
                 Ray ray = FindObjectOfType<Camera>().ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit))
                 {
-                    if ((hit.collider.gameObject.GetComponent<Player>()&& hit.collider.gameObject != gameObject) || hit.collider.gameObject.GetComponent<AIPlayer>() )
+                    if ((hit.collider.gameObject.GetComponent<Player>() && hit.collider.gameObject != gameObject)
+                        || hit.collider.gameObject.GetComponent<AIPlayer>() )
                     {
                         target = hit.collider.gameObject;
                         Publish(target.GetComponent<UnitBase>().ToString() + "gethit");
@@ -82,7 +85,7 @@ public class Player : UnitBase
             yield return null;
         }
         
-        Attacked();
+        GoEND();
 
     }
 }
