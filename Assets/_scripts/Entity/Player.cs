@@ -3,8 +3,9 @@ using System.Collections;
 
 public class Player : UnitBase
 {
-
     bool targeting = true;
+
+    public string Name;
 
     void Awake()
     {
@@ -13,6 +14,7 @@ public class Player : UnitBase
         Subscribe(this.ToString(), GoINIT);
         Subscribe(this.ToString() + "gethit", GetHit);
         base.UnitStart();
+
     }
 
 

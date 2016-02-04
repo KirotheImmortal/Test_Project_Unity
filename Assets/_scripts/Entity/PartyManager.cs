@@ -134,7 +134,6 @@ public class PartyManager : EventPubSub
             {
                 if (nextPlayer + 1 <= partyMembers.Count - 1)
                 {
-                    P
                     nextPlayer = -1;
                 }
 

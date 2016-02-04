@@ -20,7 +20,20 @@ public class EventSystem : MonoBehaviour
     /// </summary>
     Dictionary<string, Callback> Subscribers = new Dictionary<string, Callback>();
 
-
+    //Gathers all Subscriber members from all EventSystem instances
+    static Dictionary<string, Callback> AllSubs
+    {
+        get
+        {
+            Dictionary<string, Callback> subs = new Dictionary<string, Callback>();
+            EventSystem[] list = Resources.FindObjectsOfTypeAll<EventSystem>();
+            foreach(EventSystem es in list)
+            {
+                subs = es.Subscribers;
+            }
+            return subs;
+        }
+    }
 
 
     /// <summary>
@@ -67,9 +80,17 @@ public class EventSystem : MonoBehaviour
         else throw new ArgumentException("Subscription to '" + sPub.ToLower(), this.ToString());
     }
 
+    static public List<string> Subscriptions()
+    {
+        List<string> rlist = new List<string>();
 
+        foreach(KeyValuePair<string,Callback> r in AllSubs)
+        {
+            rlist.Add(r.Key);
+        }
 
+        return rlist;
 
-
+    }
     
 }
